@@ -86,6 +86,26 @@ else
             exit 1
         fi
     done
+
+    echo -e "${YELLOW}💾 Committing and pushing changes to remote fork...${NC}"
+    git add "${FILES_TO_UPDATE[@]}"
+    
+    if ! git diff --cached --quiet; then
+        if ! git config user.name > /dev/null 2>&1 || ! git config user.email > /dev/null 2>&1; then
+            git config user.name "Setup Script"
+            git config user.email "setup@k8s-playground"
+        fi
+        git commit -m "chore: auto-configure self-managed apps for fork"
+        
+        echo -e "${BLUE}⬆️  Pushing changes to origin...${NC}"
+        if ! git push; then
+            echo -e "${RED}⚠️  Git push failed! Please push manually to ensure Argo CD syncs correctly.${NC}"
+        else
+            echo -e "${GREEN}✅ Changes pushed successfully.${NC}"
+        fi
+    else
+        echo -e "${GREEN}✅ No changes to push.${NC}"
+    fi
 fi
 
 # Root Application Deployment

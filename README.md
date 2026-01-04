@@ -9,7 +9,7 @@ The goal of this project is to provide an "easy button" for developers and platf
 Before starting, please ensure the following are installed:
 * Docker, Kind, kubectl, Helm, and git.
 
-👉 [**View the CLI Installation Guide**](docs/binary-install.md) for detailed instructions.
+👉 [View the CLI Installation Guide](docs/binary-install.md) for detailed instructions.
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ cd k8s-tooling-playground
 ```
 
 ### 2. Initialise the Cluster
-The bootstrap script handles the heavy lifting. It creates the Kind cluster, installs Argo CD, and automatically configures the Root Application to point to your personal fork.
+The bootstrap script handles the heavy lifting. It creates the Kind cluster, installs Argo CD, and automatically configures the Root Application to point to your personal fork (and pushes these changes to your git repo).
 
 ```bash
 chmod +x setup.sh
