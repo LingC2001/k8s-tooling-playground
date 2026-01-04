@@ -39,6 +39,16 @@ Once the initialise script completes, you can access the currently available too
 * Grafana: http://localhost:3000 (Visualisation)
 * Prometheus: http://localhost:9090 (Metrics)
 
+### Self-Managed Apps
+In this playground, a **Self-Managed App** is any application that sources its manifests from *this* Git repository (your custom fork), rather than an upstream public repository (like `kube-prometheus-stack` or `kyverno` which usually point to public Helm charts). To ensure these apps work correctly in your fork, the `setup.sh` script automatically detects your git repository URL and updates the `repoURL` field in their manifests.
+
+By default, this includes:
+* The Root App (`bootstrap/root-app.yaml`)
+* Kro Definitions (`apps/kro-definitions.yaml`)
+* Kro Instances (`apps/kro-instances.yaml`)
+
+If you add your own custom applications to this repository, you can register them in the `SELF_MANAGED_APPS` array within `setup.sh`. Since `setup.sh` is designed for initial bootstrapping, you should commit your changes to your fork, run `./cleanup.sh`, and then re-run `./setup.sh` to apply the new configuration.
+
 ---
 
 ## Exploring the Ecosystem
@@ -58,6 +68,7 @@ As this repository grows, new tools will be added to the apps directory. To test
    git add .
    git commit -m "Update tool configuration"
    git push origin main
+   git push origin mainit 
    ```
 
 3. **Observe:** Watch the Argo CD UI as it detects the "Out of Sync" state and automatically reconciles your cluster to match your Git repository.

@@ -8,6 +8,7 @@ CLUSTER_NAME="k8s-tooling-playground"
 ARGO_NAMESPACE="argocd"
 PROM_NAMESPACE="monitoring"
 ROOT_APP_PATH="bootstrap/root-app.yaml"
+SELF_MANAGED_APPS=("apps/kro-definitions.yaml" "apps/kro-instances.yaml")
 ARGOCD_VERSION="v3.0.21"
 
 # Colors for output
@@ -70,16 +71,21 @@ USER_REPO_URL=$(git config --get remote.origin.url | sed 's/\.git//')
 if [ -z "$USER_REPO_URL" ]; then
     echo -e "${RED}⚠️ Could not detect Git URL. Defaulting to local file values.${NC}"
 else
-    if [ ! -f "$ROOT_APP_PATH" ]; then
-        echo -e "${RED}❌ Error: Root app manifest $ROOT_APP_PATH not found.${NC}"
-        exit 1
-    fi
-    echo -e "Setting Root App to watch: ${BLUE}$USER_REPO_URL${NC}"
-    if [ "$(uname)" = "Darwin" ]; then
-        sed -i '' "s|repoURL:.*|repoURL: $USER_REPO_URL|g" $ROOT_APP_PATH
-    else
-        sed -i "s|repoURL:.*|repoURL: $USER_REPO_URL|g" $ROOT_APP_PATH
-    fi
+    FILES_TO_UPDATE=("$ROOT_APP_PATH" "${SELF_MANAGED_APPS[@]}")
+    echo -e "Setting repositories to watch: ${BLUE}$USER_REPO_URL${NC}"
+
+    for file in "${FILES_TO_UPDATE[@]}"; do
+        if [ -f "$file" ]; then
+            if [ "$(uname)" = "Darwin" ]; then
+                sed -i '' "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
+            else
+                sed -i "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
+            fi
+        elif [ "$file" == "$ROOT_APP_PATH" ]; then
+            echo -e "${RED}❌ Error: Root app manifest $ROOT_APP_PATH not found.${NC}"
+            exit 1
+        fi
+    done
 fi
 
 # Root Application Deployment
