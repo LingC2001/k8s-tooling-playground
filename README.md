@@ -2,9 +2,7 @@
 
 This repository is designed as a growing, extensible sandbox for exploring the Kubernetes ecosystem. It provides an automated way to spin up a multi-node cluster using Kind and manages a library of industry-standard tools via Argo CD using the App-of-Apps pattern.
 
-The goal of this project is to provide an "easy button" for developers and platform engineers to experiment with tools like Prometheus, Grafana, and Ingress controllers without the manual labour of individual installations.
-
-
+The goal of this project is to provide an "easy button" for developers and platform engineers to experiment with tools like Prometheus, Grafana, Kro, and Ingress controllers without the manual labour of individual installations.
 
 ## Prerequisites
 
@@ -45,23 +43,24 @@ Once the initialise script completes, you can access the currently available too
 
 ## Exploring the Ecosystem
 
-This playground uses a "Parent-Child" application model. The Root Application in the bootstrap directory monitors the apps directory. Any tool defined in the apps folder is automatically deployed and managed by Argo CD.
+This playground uses a "Parent-Child" application model. The Root Application in the bootstrap directory monitors the `apps/` directory.
 
-
+### Core Tools
+* **Prometheus & Grafana:** Full-stack observability and dashboarding.
+* **Kro (Kubernetes Resource Orchestrator):** Simplifies custom resource creation. It allows you to define complex multi-resource patterns (e.g., a "Web-App" abstraction) as a single API without writing Go code or custom operators.
 
 ### How to Experiment
 As this repository grows, new tools will be added to the apps directory. To test the GitOps workflow:
-1. Navigate to a tool's configuration in the apps/ directory.
-2. Modify the manifest (e.g. changing a resource limit or a version).
-3. Commit and push your changes:
+1. **Modify:** Navigate to a tool in apps/ and adjust its manifest (e.g., update a version tag or a Helm value).
+2. **Commit:** Push your changes to trigger the sync:
 
    ```bash
    git add .
-   git commit -m "Adjusting tool configuration"
+   git commit -m "Update tool configuration"
    git push origin main
    ```
 
-4. Observe the Argo CD interface as it detects the change and synchronises your cluster to match your Git repository.
+3. **Observe:** Watch the Argo CD UI as it detects the "Out of Sync" state and automatically reconciles your cluster to match your Git repository.
 
 ## Resetting the Environment
 To completely remove the cluster and start fresh, run the cleanup script:
