@@ -1,0 +1,1618 @@
+basePath: /api/v1
+definitions:
+  models.AddInviteeGroupsRequest:
+    properties:
+      group_ids:
+        description: List of group IDs to invite (at least one required)
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - group_ids
+    type: object
+  models.AddInviteesRequest:
+    properties:
+      user_ids:
+        description: List of user IDs to invite (at least one required)
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - user_ids
+    type: object
+  models.CancelEventRequest:
+    properties:
+      reason:
+        description: Optional reason for cancellation (pointer to distinguish between
+          empty and not provided)
+        type: string
+    type: object
+  models.CreateEventRequest:
+    properties:
+      address:
+        description: Human-readable address (optional)
+        type: string
+      cover_image_url:
+        description: Cover image URL (optional)
+        type: string
+      description:
+        description: Description is optional
+        type: string
+      end_time:
+        description: EndTime is required
+        type: string
+      latitude:
+        description: Latitude coordinate (optional)
+        type: number
+      longitude:
+        description: Longitude coordinate (optional)
+        type: number
+      repeat_rule:
+        description: Repeat rule (optional)
+        type: string
+      repeat_until:
+        description: Repeat until date (optional)
+        type: string
+      start_time:
+        description: StartTime is required
+        type: string
+      tags:
+        description: Tags (optional)
+        items:
+          type: string
+        type: array
+      title:
+        description: Title is required
+        type: string
+    required:
+    - end_time
+    - start_time
+    - title
+    type: object
+  models.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - username
+    type: object
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Event:
+    properties:
+      address:
+        description: Human-readable address of the event
+        type: string
+      cancellation_reason:
+        description: Reason for cancellation (if cancelled)
+        type: string
+      cover_image_url:
+        description: URL to cover image
+        type: string
+      created_at:
+        description: Timestamp of creation
+        type: string
+      created_by:
+        description: User ID of the creator
+        type: string
+      description:
+        description: Description of the event
+        type: string
+      end_time:
+        description: End time of the event
+        type: string
+      event_id:
+        description: UUID
+        type: string
+      event_location:
+        allOf:
+        - $ref: '#/definitions/models.EventLocation'
+        description: Geographical coordinates (latitude, longitude)
+      repeat_rule:
+        description: Rule for repeating events, e.g., "daily", "weekly", "monthly"
+        type: string
+      repeat_until:
+        description: Date until which the event should repeat, if applicable // pointer
+          to distinguish between zero time and not set
+        type: string
+      start_time:
+        description: Start time of the event
+        type: string
+      status:
+        description: Status of the event ("Scheduled", "Ongoing", "Completed", "Cancelled")
+        type: string
+      tags:
+        description: List of tags for categorization
+        items:
+          type: string
+        type: array
+      title:
+        description: Title of the event
+        type: string
+      updated_at:
+        description: Timestamp of last update
+        type: string
+    type: object
+  models.EventListResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/models.Event'
+        type: array
+    type: object
+  models.EventLocation:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
+  models.EventResponse:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/models.Event'
+        description: Event details
+    type: object
+  models.Group:
+    properties:
+      cover_image_url:
+        description: URL to cover image
+        type: string
+      created_at:
+        description: Timestamp of creation
+        type: string
+      created_by:
+        description: User ID of the creator
+        type: string
+      description:
+        description: Group description
+        type: string
+      id:
+        description: UUID
+        type: string
+      invites:
+        description: List of group invites
+        items:
+          $ref: '#/definitions/models.Invites'
+        type: array
+      members:
+        description: List of group members
+        items:
+          $ref: '#/definitions/models.GroupMember'
+        type: array
+      name:
+        description: Group name
+        type: string
+      tags:
+        description: List of tags for categorization
+        items:
+          type: string
+        type: array
+    type: object
+  models.GroupMember:
+    properties:
+      joined_at:
+        description: Timestamp of when the user joined
+        type: string
+      role:
+        description: '"admin", "member"'
+        type: string
+      share_location:
+        description: true if the user shares location with the group
+        type: boolean
+      user_id:
+        description: UUID of the user
+        type: string
+    type: object
+  models.Invitee:
+    properties:
+      group_id:
+        description: ID of the group if the invitee is from a group invite
+        type: string
+      notes:
+        description: Optional notes from the invitee
+        type: string
+      respond_time:
+        description: Timestamp of the response, if responded
+        type: string
+      status:
+        description: Invitation status ("Pending", "Accepted", "Declined")
+        type: string
+      user_id:
+        description: ID of the invitee
+        type: string
+    type: object
+  models.InviteeListResponse:
+    properties:
+      invitees:
+        items:
+          $ref: '#/definitions/models.Invitee'
+        type: array
+    type: object
+  models.InviteeResponse:
+    properties:
+      invitee:
+        $ref: '#/definitions/models.Invitee'
+    type: object
+  models.Invites:
+    properties:
+      created_at:
+        description: Timestamp of creation
+        type: string
+      event_id:
+        description: UUID of the event
+        type: string
+      group_id:
+        description: UUID of the group, if applicable
+        type: string
+      invite_id:
+        description: UUID
+        type: string
+      notes:
+        description: Optional notes from the invitee
+        type: string
+      responded_at:
+        description: Timestamp of response, if applicable
+        type: string
+      status:
+        description: '"pending", "accepted", "declined"'
+        type: string
+      user_id:
+        description: UUID of the invited user
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  models.ParticipantLocations:
+    properties:
+      locations:
+        items:
+          $ref: '#/definitions/models.UserLocation'
+        type: array
+    type: object
+  models.RSVPRequest:
+    properties:
+      notes:
+        description: Optional notes (pointer to distinguish between empty and not
+          provided)
+        type: string
+      status:
+        description: 'RSVP status: Accepted or Declined (Pending not allowed for self-RSVP)'
+        enum:
+        - Accepted
+        - Declined
+        type: string
+    required:
+    - status
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UpdateEventRequest:
+    properties:
+      address:
+        description: Human-readable address (optional)
+        type: string
+      cover_image_url:
+        description: Cover image URL (optional)
+        type: string
+      description:
+        description: Description is optional
+        type: string
+      end_time:
+        description: EndTime is required
+        type: string
+      event_status:
+        description: Event status (optional)
+        type: string
+      latitude:
+        description: Latitude coordinate (optional)
+        type: number
+      longitude:
+        description: Longitude coordinate (optional)
+        type: number
+      repeat_rule:
+        description: Repeat rule (optional)
+        type: string
+      repeat_until:
+        description: Repeat until date (optional)
+        type: string
+      start_time:
+        description: StartTime is required
+        type: string
+      tags:
+        description: Tags (optional)
+        items:
+          type: string
+        type: array
+      title:
+        description: Title is required
+        type: string
+    required:
+    - end_time
+    - start_time
+    - title
+    type: object
+  models.UpdateInviteeStatusRequest:
+    properties:
+      notes:
+        description: Optional notes from the invitee (pointer to distinguish between
+          empty and not provided)
+        type: string
+      status:
+        description: 'Status must be one of: Pending, Accepted, Declined'
+        enum:
+        - Pending
+        - Accepted
+        - Declined
+        type: string
+    required:
+    - status
+    type: object
+  models.UpdateLocationRequest:
+    properties:
+      accuracy:
+        description: GPS accuracy in meters (optional, default 0)
+        minimum: 0
+        type: number
+      latitude:
+        description: Latitude coordinate (-90 to 90)
+        maximum: 90
+        minimum: -90
+        type: number
+      longitude:
+        description: Longitude coordinate (-180 to 180)
+        maximum: 180
+        minimum: -180
+        type: number
+    required:
+    - latitude
+    - longitude
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      onboarding_complete:
+        type: boolean
+      phone_number:
+        type: string
+      username:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        description: Timestamp of creation
+        type: string
+      email:
+        description: User email
+        type: string
+      friends:
+        description: List of user IDs who are friends with this user
+        items:
+          type: string
+        type: array
+      groups:
+        description: List of groups the user belongs to
+        items:
+          $ref: '#/definitions/models.Group'
+        type: array
+      invites:
+        description: List of event invites for the user
+        items:
+          $ref: '#/definitions/models.Invites'
+        type: array
+      location:
+        allOf:
+        - $ref: '#/definitions/models.UserLocation'
+        description: Current location of the user, if available
+      onboarding_complete:
+        description: Whether user has completed onboarding
+        type: boolean
+      phone_number:
+        description: User phone number (optional)
+        type: string
+      profile_image_url:
+        description: URL to profile image
+        type: string
+      settings:
+        allOf:
+        - $ref: '#/definitions/models.UserSettings'
+        description: JSON string for user settings/preferences
+      updated_at:
+        description: Additional fields can be added as needed
+        type: string
+      user_id:
+        description: UUID
+        type: string
+      username:
+        description: Unique username
+        type: string
+    type: object
+  models.UserLocation:
+    properties:
+      accuracy:
+        description: Accuracy in meters
+        type: number
+      latitude:
+        description: Latitude coordinate
+        type: number
+      longitude:
+        description: Longitude coordinate
+        type: number
+      timestamp:
+        description: Timestamp of the location update
+        type: string
+      user_id:
+        description: UUID of the user
+        type: string
+    type: object
+  models.UserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.UserSettings:
+    properties:
+      notification_preferences:
+        properties:
+          event_reminders:
+            description: '"all", "friends_only", "none"'
+            type: string
+          friend_activity:
+            description: true or false
+            type: boolean
+        type: object
+      share_location_with_groups:
+        description: List of groups to share location with
+        items:
+          $ref: '#/definitions/models.Group'
+        type: array
+    type: object
+info:
+  contact: {}
+  description: This is the API documentation for the test-app application.
+  title: test-app API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Login user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with email and password
+      parameters:
+      - description: User registration details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Register a new user and return a JWT token
+      tags:
+      - auth
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of events with optional filtering, pagination,
+        and sorting
+      parameters:
+      - description: Filter by user ID (events user is invited to)
+        in: query
+        name: user_id
+        type: string
+      - description: Filter by group ID
+        in: query
+        name: group_id
+        type: string
+      - description: Filter by organizer/creator ID
+        in: query
+        name: organizer_id
+        type: string
+      - description: Filter upcoming events only
+        in: query
+        name: upcoming
+        type: boolean
+      - description: Filter past events only
+        in: query
+        name: past
+        type: boolean
+      - description: Filter ongoing events only
+        in: query
+        name: ongoing
+        type: boolean
+      - description: Filter events starting after this date (RFC3339 format)
+        in: query
+        name: start_after
+        type: string
+      - description: Filter events ending before this date (RFC3339 format)
+        in: query
+        name: end_before
+        type: string
+      - description: Filter by location (text match)
+        in: query
+        name: location
+        type: string
+      - description: Filter by status (draft, active, canceled, etc.)
+        in: query
+        name: status
+        type: string
+      - description: 'Pagination limit (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Pagination offset (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      - description: 'Sort field (default: start_time)'
+        in: query
+        name: sort
+        type: string
+      - description: 'Sort order: asc or desc (default: asc)'
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns events array and metadata
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all events
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the provided details
+      parameters:
+      - description: Event details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new event
+      tags:
+      - events
+  /events/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific event by its ID. Only the event creator can delete
+        the event.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an event by ID
+      tags:
+      - events
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific event by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get an event by ID
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing event by its ID. Only the event
+        creator can update the event.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Updated event details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an existing event
+      tags:
+      - events
+  /events/{event_id}/attendees:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of users who have accepted the invitation to the
+        event (status = "Accepted")
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InviteeListResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get confirmed attendees for an event
+      tags:
+      - events
+  /events/{event_id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Change the event status to "Cancelled". Only the event creator
+        can cancel the event. This does not delete the event.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Optional cancellation reason
+        in: body
+        name: reason
+        schema:
+          $ref: '#/definitions/models.CancelEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.EventResponse'
+        "400":
+          description: Invalid request or event already cancelled
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Cancel an event
+      tags:
+      - events
+  /events/{event_id}/invitees:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all invitees for a specific event, including
+        their response status
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Filter by invitation status (Pending, Accepted, Declined)
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InviteeListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get invitees for an event
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Add one or more users to an event's invitation list. Only the event
+        creator can add invitees.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: List of user IDs to invite
+        in: body
+        name: invitees
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddInviteesRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Invitees added successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add invitees to an event
+      tags:
+      - events
+  /events/{event_id}/invitees/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a user from the event's invitation list. Only the event
+        creator can remove invitees.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: User ID of the invitee to remove
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event or invitee not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove an invitee from an event
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update the RSVP status of an invitee for a specific event. Event
+        creator or the invitee can update the status.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: User ID of the invitee
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: New status and optional notes
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateInviteeStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InviteeResponse'
+        "400":
+          description: Invalid status or request body
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not event creator or invitee
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event or invitee not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update invitee status
+      tags:
+      - events
+  /events/{event_id}/invitees/groups:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of groups that have been invited to a specific
+        event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'List of group IDs" example({"groups": ["group-123", "group-456"]})'
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get invitee groups for an event
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Invite entire groups to an event. All members of the invited groups
+        will be added as invitees. Only the event creator can add groups.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: List of group IDs to invite
+        in: body
+        name: groups
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddInviteeGroupsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Invitee groups added successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not the event creator
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add invitee groups to an event
+      tags:
+      - events
+  /events/{event_id}/locations:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the real-time GPS locations of participants who have shared
+        their location for a specific event. Only participants can view locations.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ParticipantLocations'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not a participant
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get participant locations for an event
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Update the authenticated user's current GPS location for an event.
+        Only participants can update their location.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: User's current location
+        in: body
+        name: location
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Location updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid coordinates
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden - not a participant
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update participant location for an event
+      tags:
+      - events
+  /events/{event_id}/rsvp:
+    post:
+      consumes:
+      - application/json
+      description: Allow the authenticated user to respond to an event invitation.
+        Status must be Accepted or Declined.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: RSVP status and optional notes
+        in: body
+        name: rsvp
+        required: true
+        schema:
+          $ref: '#/definitions/models.RSVPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InviteeResponse'
+        "400":
+          description: Invalid status (must be Accepted or Declined)
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Event not found or user not invited
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: RSVP to an event
+      tags:
+      - events
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided details
+      parameters:
+      - description: User details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a user by ID
+      tags:
+      - users
+  /users/{id}/friends:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all friends of a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get user's friends
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Send a friend request to another user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add a friend
+      tags:
+      - users
+  /users/{id}/friends/{friend_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a friend from the user's friend list
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Remove a friend
+      tags:
+      - users
+  /users/{id}/friends/requests:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all incoming friend requests for a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get friend requests
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Send a friend request to another user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Send a friend request
+      tags:
+      - users
+  /users/{id}/groups:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all groups that a user is a member of
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get user's groups
+      tags:
+      - users
+  /users/{id}/location:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the most recent location of a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get user's current location
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Update the current location of a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update user's location
+      tags:
+      - users
+  /users/{id}/location/history:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the location history of a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get user's location history
+      tags:
+      - users
+  /users/{id}/map/pins:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all map pins created by a specific user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get user's map pins
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new map pin for the user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add a new map pin
+      tags:
+      - users
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the profile of the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user's profile
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      description: Update the profile of the currently authenticated user
+      parameters:
+      - description: User update details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update current user's profile
+      tags:
+      - users
+  /users/me/events:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all events that the currently authenticated user created
+        or is invited to
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.EventListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user's events
+      tags:
+      - users
+  /users/me/friends:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all friends of the currently authenticated user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get current user's friends
+      tags:
+      - users
+  /users/me/groups:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all groups that the currently authenticated user is a
+        member of
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get current user's groups
+      tags:
+      - users
+  /users/me/location:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the most recent location of the authenticated user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get current user's location
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Update the current location of the authenticated user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update current user's location
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
