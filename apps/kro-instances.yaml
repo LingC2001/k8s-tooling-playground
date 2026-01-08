@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/alanliangdev/k8s-tooling-playground
+    repoURL: https://github.com/LingC2001/k8s-tooling-playground
     targetRevision: HEAD
     path: instances
   destination:
