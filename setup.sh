@@ -64,49 +64,49 @@ kubectl wait --for=condition=available --timeout=120s deployment/argocd-repo-ser
 # Networking Configuration (NodePort for Host Access)
 kubectl patch svc argocd-server -n $ARGO_NAMESPACE --type='json' -p='[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":30080}]'
 
-# Git Repository Auto-Detection
-echo -e "${YELLOW}🔗 Detecting Git fork URL...${NC}"
-USER_REPO_URL=$(git config --get remote.origin.url | sed 's/\.git//')
+# # Git Repository Auto-Detection
+# echo -e "${YELLOW}🔗 Detecting Git fork URL...${NC}"
+# USER_REPO_URL=$(git config --get remote.origin.url | sed 's/\.git//')
 
-if [ -z "$USER_REPO_URL" ]; then
-    echo -e "${RED}⚠️ Could not detect Git URL. Defaulting to local file values.${NC}"
-else
-    FILES_TO_UPDATE=("$ROOT_APP_PATH" "${SELF_MANAGED_APPS[@]}")
-    echo -e "Setting repositories to watch: ${BLUE}$USER_REPO_URL${NC}"
+# if [ -z "$USER_REPO_URL" ]; then
+#     echo -e "${RED}⚠️ Could not detect Git URL. Defaulting to local file values.${NC}"
+# else
+#     FILES_TO_UPDATE=("$ROOT_APP_PATH" "${SELF_MANAGED_APPS[@]}")
+#     echo -e "Setting repositories to watch: ${BLUE}$USER_REPO_URL${NC}"
 
-    for file in "${FILES_TO_UPDATE[@]}"; do
-        if [ -f "$file" ]; then
-            if [ "$(uname)" = "Darwin" ]; then
-                sed -i '' "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
-            else
-                sed -i "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
-            fi
-        elif [ "$file" == "$ROOT_APP_PATH" ]; then
-            echo -e "${RED}❌ Error: Root app manifest $ROOT_APP_PATH not found.${NC}"
-            exit 1
-        fi
-    done
+#     for file in "${FILES_TO_UPDATE[@]}"; do
+#         if [ -f "$file" ]; then
+#             if [ "$(uname)" = "Darwin" ]; then
+#                 sed -i '' "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
+#             else
+#                 sed -i "s|repoURL:.*|repoURL: $USER_REPO_URL|g" "$file"
+#             fi
+#         elif [ "$file" == "$ROOT_APP_PATH" ]; then
+#             echo -e "${RED}❌ Error: Root app manifest $ROOT_APP_PATH not found.${NC}"
+#             exit 1
+#         fi
+#     done
 
-    echo -e "${YELLOW}💾 Committing and pushing changes to remote fork...${NC}"
-    git add "${FILES_TO_UPDATE[@]}"
+#     echo -e "${YELLOW}💾 Committing and pushing changes to remote fork...${NC}"
+#     git add "${FILES_TO_UPDATE[@]}"
     
-    if ! git diff --cached --quiet; then
-        if ! git config user.name > /dev/null 2>&1 || ! git config user.email > /dev/null 2>&1; then
-            git config user.name "Setup Script"
-            git config user.email "setup@k8s-playground"
-        fi
-        git commit -m "chore: auto-configure self-managed apps for fork"
+#     if ! git diff --cached --quiet; then
+#         if ! git config user.name > /dev/null 2>&1 || ! git config user.email > /dev/null 2>&1; then
+#             git config user.name "Setup Script"
+#             git config user.email "setup@k8s-playground"
+#         fi
+#         git commit -m "chore: auto-configure self-managed apps for fork"
         
-        echo -e "${BLUE}⬆️  Pushing changes to origin...${NC}"
-        if ! git push; then
-            echo -e "${RED}⚠️  Git push failed! Please push manually to ensure Argo CD syncs correctly.${NC}"
-        else
-            echo -e "${GREEN}✅ Changes pushed successfully.${NC}"
-        fi
-    else
-        echo -e "${GREEN}✅ No changes to push.${NC}"
-    fi
-fi
+#         echo -e "${BLUE}⬆️  Pushing changes to origin...${NC}"
+#         if ! git push; then
+#             echo -e "${RED}⚠️  Git push failed! Please push manually to ensure Argo CD syncs correctly.${NC}"
+#         else
+#             echo -e "${GREEN}✅ Changes pushed successfully.${NC}"
+#         fi
+#     else
+#         echo -e "${GREEN}✅ No changes to push.${NC}"
+#     fi
+# fi
 
 # Root Application Deployment
 echo -e "${YELLOW}🎯 Deploying Root Application...${NC}"
